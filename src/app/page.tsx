@@ -37,10 +37,11 @@ export default function Home() {
             Оберіть те, що вам до вподоби
           </p>
         </AnimatedSection>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-          {categories.map((cat, i) => (
-            <AnimatedSection key={cat.slug} delay={i * 100}>
+        <AnimatedSection delay={200}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {categories.map((cat) => (
               <Link
+                key={cat.slug}
                 href={`/catalog/${cat.slug}`}
                 className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 text-center overflow-hidden hover:-translate-y-1"
               >
@@ -55,9 +56,9 @@ export default function Home() {
                   <p className="text-sm text-gray-500 mt-1">{cat.count} товарів</p>
                 </div>
               </Link>
-            </AnimatedSection>
-          ))}
-        </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* Banner with parallax feel */}
@@ -100,13 +101,13 @@ export default function Home() {
             </Link>
           </div>
         </AnimatedSection>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-          {featured.map((product, i) => (
-            <AnimatedSection key={product.id} delay={i * 80}>
-              <ProductCard product={product} />
-            </AnimatedSection>
-          ))}
-        </div>
+        <AnimatedSection delay={100}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {featured.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* Why us section */}
@@ -117,33 +118,33 @@ export default function Home() {
               Чому обирають нас
             </h2>
           </AnimatedSection>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: "\u{1F48E}",
-                title: "100% оригінал",
-                desc: "Тільки сертифікована продукція від перевірених постачальників",
-              },
-              {
-                icon: "\u{1F69A}",
-                title: "Швидка доставка",
-                desc: "Нова Пошта та Укрпошта по всій Україні за 1-3 дні",
-              },
-              {
-                icon: "\u{1F4B0}",
-                title: "Найкращі ціни",
-                desc: "Прямі поставки без посередників — економія до 50%",
-              },
-            ].map((item, i) => (
-              <AnimatedSection key={i} delay={i * 150}>
-                <div className="text-center p-8 rounded-2xl hover:bg-pink-50 transition-colors duration-300">
+          <AnimatedSection delay={100}>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: "\u{1F48E}",
+                  title: "100% оригінал",
+                  desc: "Тільки сертифікована продукція від перевірених постачальників",
+                },
+                {
+                  icon: "\u{1F69A}",
+                  title: "Швидка доставка",
+                  desc: "Нова Пошта та Укрпошта по всій Україні за 1-3 дні",
+                },
+                {
+                  icon: "\u{1F4B0}",
+                  title: "Найкращі ціни",
+                  desc: "Прямі поставки без посередників — економія до 50%",
+                },
+              ].map((item, i) => (
+                <div key={i} className="text-center p-8 rounded-2xl hover:bg-pink-50 transition-colors duration-300">
                   <span className="text-5xl mb-4 block">{item.icon}</span>
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{item.title}</h3>
                   <p className="text-gray-500">{item.desc}</p>
                 </div>
-              </AnimatedSection>
-            ))}
-          </div>
+              ))}
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
