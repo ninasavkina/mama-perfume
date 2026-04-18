@@ -71,7 +71,7 @@ export default function HomeHero() {
         }}
       >
         <img
-          src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=2000&q=80"
+          src="https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=2000&q=80"
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -161,15 +161,6 @@ export default function HomeHero() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
-        <div
-          className={`transition-all duration-1000 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <p className="text-white/80 text-lg md:text-xl mb-4 tracking-widest uppercase font-light">
-            Оригінальна парфумерія
-          </p>
-        </div>
         <h1
           className={`text-5xl md:text-7xl font-bold text-white mb-6 transition-all duration-1000 delay-200 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
