@@ -62,14 +62,29 @@ export default function HomeHero() {
       ref={heroRef}
       className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
     >
-      {/* Gradient background with parallax */}
+      {/* Background photo with zoom on scroll */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-pink-400 via-rose-400 to-fuchsia-500"
+        className="absolute inset-0"
+        style={{
+          transform: `scale(${1 + scrollY * 0.0008})`,
+          transformOrigin: "center center",
+        }}
+      >
+        <img
+          src="https://reva4ever.com/_sh/209/20922.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Gradient overlay on top of photo */}
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-pink-500/80 via-rose-500/70 to-fuchsia-600/80"
         style={{ transform: `translateY(${scrollY * 0.1}px)` }}
       />
 
-      {/* Mesh gradient overlay */}
-      <div className="absolute inset-0 opacity-40">
+      {/* Mesh gradient blobs */}
+      <div className="absolute inset-0 opacity-30">
         <div
           className="absolute w-[600px] h-[600px] rounded-full blur-[120px] bg-purple-400"
           style={{
