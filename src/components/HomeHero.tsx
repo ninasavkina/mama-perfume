@@ -64,14 +64,14 @@ export default function HomeHero() {
     >
       {/* Background photo with zoom on scroll */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 overflow-hidden"
         style={{
           transform: `scale(${1 + scrollY * 0.0008})`,
           transformOrigin: "center center",
         }}
       >
         <img
-          src="https://reva4ever.com/_sh/209/20922.webp"
+          src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=2000&q=80"
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -79,9 +79,12 @@ export default function HomeHero() {
 
       {/* Gradient overlay on top of photo */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-pink-500/80 via-rose-500/70 to-fuchsia-600/80"
+        className="absolute inset-0 bg-gradient-to-br from-pink-500/60 via-rose-400/40 to-fuchsia-600/60"
         style={{ transform: `translateY(${scrollY * 0.1}px)` }}
       />
+
+      {/* Dark vignette for text contrast */}
+      <div className="absolute inset-0 bg-black/10" />
 
       {/* Mesh gradient blobs */}
       <div className="absolute inset-0 opacity-30">
