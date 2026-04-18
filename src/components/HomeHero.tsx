@@ -2,24 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
-const FLOWERS = [
-  { emoji: "\u{1F338}", size: 28, speed: 0.3, x: 5 },
-  { emoji: "\u{1F33A}", size: 22, speed: 0.5, x: 15 },
-  { emoji: "\u{1F33B}", size: 26, speed: 0.2, x: 25 },
-  { emoji: "\u{1F337}", size: 30, speed: 0.4, x: 35 },
-  { emoji: "\u{1F33C}", size: 20, speed: 0.35, x: 45 },
-  { emoji: "\u{1F338}", size: 24, speed: 0.45, x: 55 },
-  { emoji: "\u{1F33A}", size: 32, speed: 0.25, x: 65 },
-  { emoji: "\u{1F337}", size: 18, speed: 0.55, x: 75 },
-  { emoji: "\u{1F33B}", size: 26, speed: 0.3, x: 85 },
-  { emoji: "\u{1F33C}", size: 22, speed: 0.4, x: 92 },
-  { emoji: "\u{1F338}", size: 20, speed: 0.35, x: 10 },
-  { emoji: "\u{1F33A}", size: 28, speed: 0.5, x: 50 },
-  { emoji: "\u{1F337}", size: 24, speed: 0.2, x: 70 },
-  { emoji: "\u{1F33C}", size: 30, speed: 0.45, x: 30 },
-  { emoji: "\u{1F33B}", size: 18, speed: 0.3, x: 80 },
-];
+const PerfumeBottle3D = dynamic(() => import("./PerfumeBottle3D"), {
+  ssr: false,
+});
 
 // Deterministic petals to avoid hydration mismatch
 const PETALS = [
@@ -48,24 +35,43 @@ const PETALS = [
 export default function HomeHero() {
   const [scrollY, setScrollY] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [vh, setVh] = useState(800);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisible(true);
+    setVh(window.innerHeight);
     const handleScroll = () => setScrollY(window.scrollY);
+    const handleResize = () => setVh(window.innerHeight);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  // Scroll progress 0..1 over one viewport
+  const scrollProgress = Math.min(scrollY / vh, 1);
+
+  // 3D bottle fades out as you scroll
+  const bottleOpacity = Math.max(0, 1 - scrollProgress * 1.5);
+  // Photo fades in as you scroll
+  const photoOpacity = Math.min(1, scrollProgress * 1.5);
 
   return (
     <section
       ref={heroRef}
       className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
     >
-      {/* Background photo with zoom on scroll */}
+      {/* Base gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-rose-400 to-fuchsia-500" />
+
+      {/* Background photo — fades IN on scroll, zooms */}
       <div
-        className="absolute inset-0 overflow-hidden"
+        className="absolute inset-0 overflow-hidden transition-opacity duration-300"
         style={{
+          opacity: photoOpacity,
           transform: `scale(${1 + scrollY * 0.0008})`,
           transformOrigin: "center center",
         }}
@@ -77,17 +83,11 @@ export default function HomeHero() {
         />
       </div>
 
-      {/* Gradient overlay on top of photo */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-pink-500/60 via-rose-400/40 to-fuchsia-600/60"
-        style={{ transform: `translateY(${scrollY * 0.1}px)` }}
-      />
-
-      {/* Dark vignette for text contrast */}
-      <div className="absolute inset-0 bg-black/10" />
+      {/* Color wash overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-500/40 via-rose-400/20 to-fuchsia-600/40" />
 
       {/* Mesh gradient blobs */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
         <div
           className="absolute w-[600px] h-[600px] rounded-full blur-[120px] bg-purple-400"
           style={{
@@ -112,6 +112,14 @@ export default function HomeHero() {
             transform: `translate(${scrollY * 0.02}px, ${-scrollY * 0.03}px)`,
           }}
         />
+      </div>
+
+      {/* 3D Perfume Bottle — fades OUT on scroll */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+        style={{ opacity: bottleOpacity }}
+      >
+        <PerfumeBottle3D scrollProgress={scrollProgress} />
       </div>
 
       {/* Falling petals */}
@@ -139,12 +147,12 @@ export default function HomeHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
+      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto pointer-events-none">
         <h1
           className={`text-5xl md:text-7xl font-bold text-white mb-6 transition-all duration-1000 delay-200 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
-          style={{ textShadow: "0 4px 30px rgba(0,0,0,0.15)" }}
+          style={{ textShadow: "0 4px 30px rgba(0,0,0,0.3)" }}
         >
           Parfum Shop
         </h1>
@@ -152,13 +160,14 @@ export default function HomeHero() {
           className={`text-xl md:text-2xl text-white/90 mb-10 max-w-xl mx-auto font-light leading-relaxed transition-all duration-1000 delay-400 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
+          style={{ textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}
         >
           Тестери, ручки-спреї та масла абсолю
           <br />
           від найкращих брендів світу
         </p>
         <div
-          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 delay-500 ${
+          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 delay-500 pointer-events-auto ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -199,7 +208,7 @@ export default function HomeHero() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce pointer-events-none">
         <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
