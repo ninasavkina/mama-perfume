@@ -2,11 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const PerfumeBottle3D = dynamic(() => import("./PerfumeBottle3D"), {
-  ssr: false,
-});
 
 // Deterministic petals to avoid hydration mismatch
 const PETALS = [
@@ -51,13 +46,8 @@ export default function HomeHero() {
     };
   }, []);
 
-  // Scroll progress 0..1 over one viewport
-  const scrollProgress = Math.min(scrollY / vh, 1);
-
-  // 3D bottle fades out as you scroll
-  const bottleOpacity = Math.max(0, 1 - scrollProgress * 1.5);
-  // Photo fades in as you scroll
-  const photoOpacity = Math.min(1, scrollProgress * 1.5);
+  // keep vh reference to avoid unused warning
+  void vh;
 
   return (
     <section
@@ -67,11 +57,10 @@ export default function HomeHero() {
       {/* Base gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-rose-400 to-fuchsia-500" />
 
-      {/* Background photo — fades IN on scroll, zooms */}
+      {/* Background photo with zoom on scroll */}
       <div
-        className="absolute inset-0 overflow-hidden transition-opacity duration-300"
+        className="absolute inset-0 overflow-hidden"
         style={{
-          opacity: photoOpacity,
           transform: `scale(${1 + scrollY * 0.0008})`,
           transformOrigin: "center center",
         }}
@@ -112,14 +101,6 @@ export default function HomeHero() {
             transform: `translate(${scrollY * 0.02}px, ${-scrollY * 0.03}px)`,
           }}
         />
-      </div>
-
-      {/* 3D Perfume Bottle — fades OUT on scroll */}
-      <div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-        style={{ opacity: bottleOpacity }}
-      >
-        <PerfumeBottle3D scrollProgress={scrollProgress} />
       </div>
 
       {/* Falling petals */}
