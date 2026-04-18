@@ -200,7 +200,7 @@ export default function HomeHero() {
 
         {/* Stats */}
         <div
-          className={`mt-16 grid grid-cols-3 gap-8 max-w-md mx-auto transition-all duration-1000 delay-700 ${
+          className={`mt-16 grid grid-cols-2 gap-8 max-w-sm mx-auto transition-all duration-1000 delay-700 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -211,10 +211,6 @@ export default function HomeHero() {
           <div>
             <p className="text-3xl md:text-4xl font-bold text-white">7</p>
             <p className="text-white/70 text-sm mt-1">категорій</p>
-          </div>
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-white">100%</p>
-            <p className="text-white/70 text-sm mt-1">оригінал</p>
           </div>
         </div>
       </div>
