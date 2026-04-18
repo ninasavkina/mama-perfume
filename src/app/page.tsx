@@ -152,11 +152,6 @@ export default function Home() {
       <AnimatedSection>
         <section className="max-w-4xl mx-auto px-4 py-16 text-center">
           <div className="relative bg-gradient-to-br from-pink-500 to-purple-600 rounded-3xl p-12 overflow-hidden">
-            <div className="absolute top-4 left-8 text-4xl opacity-30 animate-float">{"\u{1F338}"}</div>
-            <div className="absolute top-8 right-12 text-3xl opacity-30 animate-float" style={{ animationDelay: "1s" }}>{"\u{1F33A}"}</div>
-            <div className="absolute bottom-6 left-16 text-3xl opacity-30 animate-float" style={{ animationDelay: "2s" }}>{"\u{1F337}"}</div>
-            <div className="absolute bottom-4 right-8 text-4xl opacity-30 animate-float" style={{ animationDelay: "0.5s" }}>{"\u{1F33C}"}</div>
-
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative z-10">
               Готові обрати свій аромат?
             </h2>

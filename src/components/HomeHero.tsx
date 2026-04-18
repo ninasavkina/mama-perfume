@@ -3,24 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-const FLOWERS = [
-  { emoji: "\u{1F338}", size: 28, speed: 0.3, x: 5 },
-  { emoji: "\u{1F33A}", size: 22, speed: 0.5, x: 15 },
-  { emoji: "\u{1F33B}", size: 26, speed: 0.2, x: 25 },
-  { emoji: "\u{1F337}", size: 30, speed: 0.4, x: 35 },
-  { emoji: "\u{1F33C}", size: 20, speed: 0.35, x: 45 },
-  { emoji: "\u{1F338}", size: 24, speed: 0.45, x: 55 },
-  { emoji: "\u{1F33A}", size: 32, speed: 0.25, x: 65 },
-  { emoji: "\u{1F337}", size: 18, speed: 0.55, x: 75 },
-  { emoji: "\u{1F33B}", size: 26, speed: 0.3, x: 85 },
-  { emoji: "\u{1F33C}", size: 22, speed: 0.4, x: 92 },
-  { emoji: "\u{1F338}", size: 20, speed: 0.35, x: 10 },
-  { emoji: "\u{1F33A}", size: 28, speed: 0.5, x: 50 },
-  { emoji: "\u{1F337}", size: 24, speed: 0.2, x: 70 },
-  { emoji: "\u{1F33C}", size: 30, speed: 0.45, x: 30 },
-  { emoji: "\u{1F33B}", size: 18, speed: 0.3, x: 80 },
-];
-
 // Deterministic petals to avoid hydration mismatch
 const PETALS = [
   { id: 0, x: 5, delay: 0, duration: 8, size: 12, sway: 45 },
@@ -48,28 +30,53 @@ const PETALS = [
 export default function HomeHero() {
   const [scrollY, setScrollY] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [vh, setVh] = useState(800);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisible(true);
+    setVh(window.innerHeight);
     const handleScroll = () => setScrollY(window.scrollY);
+    const handleResize = () => setVh(window.innerHeight);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  // keep vh reference to avoid unused warning
+  void vh;
 
   return (
     <section
       ref={heroRef}
       className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
     >
-      {/* Gradient background with parallax */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-pink-400 via-rose-400 to-fuchsia-500"
-        style={{ transform: `translateY(${scrollY * 0.1}px)` }}
-      />
+      {/* Base gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-rose-400 to-fuchsia-500" />
 
-      {/* Mesh gradient overlay */}
-      <div className="absolute inset-0 opacity-40">
+      {/* Background photo with zoom on scroll */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          transform: `scale(${1 + scrollY * 0.0008})`,
+          transformOrigin: "center center",
+        }}
+      >
+        <img
+          src="https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=2000&q=80"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Color wash overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-500/40 via-rose-400/20 to-fuchsia-600/40" />
+
+      {/* Mesh gradient blobs */}
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
         <div
           className="absolute w-[600px] h-[600px] rounded-full blur-[120px] bg-purple-400"
           style={{
@@ -94,27 +101,6 @@ export default function HomeHero() {
             transform: `translate(${scrollY * 0.02}px, ${-scrollY * 0.03}px)`,
           }}
         />
-      </div>
-
-      {/* Floating flowers with parallax */}
-      <div className="absolute inset-0 pointer-events-none">
-        {FLOWERS.map((flower, i) => (
-          <div
-            key={i}
-            className="absolute animate-float"
-            style={{
-              left: `${flower.x}%`,
-              top: `${10 + (i * 5) % 70}%`,
-              fontSize: `${flower.size}px`,
-              transform: `translateY(${scrollY * flower.speed * -0.5}px)`,
-              animationDelay: `${i * 0.7}s`,
-              animationDuration: `${3 + i * 0.5}s`,
-              opacity: 0.6 + (i % 3) * 0.15,
-            }}
-          >
-            {flower.emoji}
-          </div>
-        ))}
       </div>
 
       {/* Falling petals */}
@@ -142,21 +128,12 @@ export default function HomeHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
-        <div
-          className={`transition-all duration-1000 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <p className="text-white/80 text-lg md:text-xl mb-4 tracking-widest uppercase font-light">
-            Оригінальна парфумерія
-          </p>
-        </div>
+      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto pointer-events-none">
         <h1
           className={`text-5xl md:text-7xl font-bold text-white mb-6 transition-all duration-1000 delay-200 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
-          style={{ textShadow: "0 4px 30px rgba(0,0,0,0.15)" }}
+          style={{ textShadow: "0 4px 30px rgba(0,0,0,0.3)" }}
         >
           Parfum Shop
         </h1>
@@ -164,13 +141,14 @@ export default function HomeHero() {
           className={`text-xl md:text-2xl text-white/90 mb-10 max-w-xl mx-auto font-light leading-relaxed transition-all duration-1000 delay-400 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
+          style={{ textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}
         >
           Тестери, ручки-спреї та масла абсолю
           <br />
           від найкращих брендів світу
         </p>
         <div
-          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 delay-500 ${
+          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 delay-500 pointer-events-auto ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -204,14 +182,14 @@ export default function HomeHero() {
             <p className="text-white/70 text-sm mt-1">категорій</p>
           </div>
           <div>
-            <p className="text-3xl md:text-4xl font-bold text-white">100%</p>
-            <p className="text-white/70 text-sm mt-1">оригінал</p>
+            <p className="text-3xl md:text-4xl font-bold text-white">500+</p>
+            <p className="text-white/70 text-sm mt-1">клієнтів</p>
           </div>
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce pointer-events-none">
         <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
