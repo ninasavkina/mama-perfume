@@ -114,27 +114,6 @@ export default function HomeHero() {
         />
       </div>
 
-      {/* Floating flowers with parallax */}
-      <div className="absolute inset-0 pointer-events-none">
-        {FLOWERS.map((flower, i) => (
-          <div
-            key={i}
-            className="absolute animate-float"
-            style={{
-              left: `${flower.x}%`,
-              top: `${10 + (i * 5) % 70}%`,
-              fontSize: `${flower.size}px`,
-              transform: `translateY(${scrollY * flower.speed * -0.5}px)`,
-              animationDelay: `${i * 0.7}s`,
-              animationDuration: `${3 + i * 0.5}s`,
-              opacity: 0.6 + (i % 3) * 0.15,
-            }}
-          >
-            {flower.emoji}
-          </div>
-        ))}
-      </div>
-
       {/* Falling petals */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {PETALS.map((petal) => (
